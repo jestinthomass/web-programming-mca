@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>String and Math Functions</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(120deg, #667eea, #764ba2);
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            background: white;
+            max-width: 750px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #5b21b6;
+        }
+
+        h2 {
+            color: #4338ca;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 8px;
+        }
+
+        input {
+            width: 95%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #a78bfa;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #6d28d9;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #4c1d95;
+        }
+
+        .result {
+            background: #ede9fe;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            line-height: 1.8;
+            overflow-wrap: anywhere;
+        }
+
+        .math {
+            background: #dbeafe;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>JavaScript String and Math Objects</h1>
+
+    <h2>1. String Object Functions</h2>
+
+    <p>Enter a string:</p>
+
+    <input type="text" id="str" placeholder="Enter any text">
+
+    <button onclick="stringFunctions()">Show String Functions</button>
+
+    <div class="result" id="stringResult">
+        String results will appear here.
+    </div>
+
+    <h2>2. Math Object Functions</h2>
+
+    <p>Enter a number:</p>
+
+    <input type="number" id="num" placeholder="Enter a number">
+
+    <button onclick="mathFunctions()">Show Math Functions</button>
+
+    <div class="result math" id="mathResult">
+        Math results will appear here.
+    </div>
+
+</div>
+
+<script>
+
+function stringFunctions() {
+
+    let str = document.getElementById("str").value;
+
+    if (str === "") {
+        alert("Please enter a string!");
+        return;
+    }
+
+    let result = "";
+
+    result += "Original String: " + str + "<br>";
+    result += "Length: " + str.length + "<br>";
+    result += "Uppercase: " + str.toUpperCase() + "<br>";
+    result += "Lowercase: " + str.toLowerCase() + "<br>";
+    result += "Character at position 1: " + str.charAt(1) + "<br>";
+    result += "Substring (0, 3): " + str.substring(0, 3) + "<br>";
+    result += "Replace (a with @): " + str.replace(/a/gi, "@") + "<br>";
+    result += "Index of first character: " + str.indexOf(str[0]) + "<br>";
+    result += "Trim: " + str.trim() + "<br>";
+
+    document.getElementById("stringResult").innerHTML = result;
+}
+
+
+function mathFunctions() {
+
+    let num = document.getElementById("num").value;
+
+    if (num === "") {
+        alert("Please enter a number!");
+        return;
+    }
+
+    num = Number(num);
+
+    let result = "";
+
+    result += "Entered Number: " + num + "<br>";
+    result += "Square Root: " + (num < 0 ? "Not a real number" : Math.sqrt(num)) + "<br>";
+    result += "Power (Square): " + Math.pow(num, 2) + "<br>";
+    result += "Round: " + Math.round(num) + "<br>";
+    result += "Ceiling: " + Math.ceil(num) + "<br>";
+    result += "Floor: " + Math.floor(num) + "<br>";
+    result += "Absolute Value: " + Math.abs(num) + "<br>";
+    result += "Maximum (num, 10): " + Math.max(num, 10) + "<br>";
+    result += "Minimum (num, 10): " + Math.min(num, 10) + "<br>";
+    result += "Random Number: " + Math.random() + "<br>";
+
+    document.getElementById("mathResult").innerHTML = result;
+}
+
+</script>
+
+</body>
+</html>
+
