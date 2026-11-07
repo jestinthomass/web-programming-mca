@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calendar Generator</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        /* Input Area */
+
+        .input-box {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 12px;
+            width: 200px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        /* Calendar - 2 Months in One Line */
+
+        #calendar {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* Month Card */
+
+        .month {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .month h2 {
+            text-align: center;
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        /* Calendar Table */
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th,
+        td {
+            width: 14.28%;
+            height: 40px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            color: #333;
+            font-size: 15px;
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        .sunday {
+            color: red;
+            font-weight: bold;
+        }
+
+        td:not(:empty):hover {
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 15px;
+            }
+
+            #calendar {
+                grid-template-columns: 1fr;
+            }
+
+            input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            button {
+                width: 100%;
+                margin-left: 0;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h1>Calendar Generator</h1>
+
+    <div class="input-box">
+
+        <input type="number" id="year" placeholder="Enter Year">
+
+        <button onclick="generateCalendar()">
+            Generate Calendar
+        </button>
+
+    </div>
+
+
+    <div id="calendar"></div>
+
+
+    <script>
+
+        function generateCalendar() {
+
+            // Get year from user
+            let year = document.getElementById("year").value;
+
+            // Get calendar area
+            let calendar = document.getElementById("calendar");
+
+
+            // Check if input is empty
+            if (year === "") {
+
+                alert("Please enter a year!");
+                return;
+
+            }
+
+
+            // Convert to number
+            year = Number(year);
+
+
+            // Check valid 4-digit year
+            if (year < 1000 || year > 9999) {
+
+                alert("Please enter a valid 4-digit year!");
+                return;
+
+            }
+
+
+            // Clear previous calendar
+            calendar.innerHTML = "";
+
+
+            // Month names
+            const months = [
+
+                "January", "February", "March", "April",
+                "May", "June", "July", "August",
+                "September", "October", "November", "December"
+
+            ];
+
+
+            // Day names
+            const days = [
+
+                "Sun", "Mon", "Tue", "Wed",
+                "Thu", "Fri", "Sat"
+
+            ];
+
+
+            // Generate all 12 months
+            for (let month = 0; month < 12; month++) {
+
+
+                // Find first day of month
+                let firstDay = new Date(
+                    year,
+                    month,
+                    1
+                ).getDay();
+
+
+                // Find total days in month
+                let totalDays = new Date(
+                    year,
+                    month + 1,
+                    0
+                ).getDate();
+
+
+                // Create month box
+                let monthDiv = document.createElement("div");
+
+                monthDiv.className = "month";
+
+
+                // Create month heading
+                let html =
+                    "<h2>" +
+                    months[month] +
+                    " " +
+                    year +
+                    "</h2>";
+
+
+                // Start table
+                html += "<table>";
+
+
+                // Add day headings
+                html += "<tr>";
+
+                for (let day = 0; day < 7; day++) {
+
+                    if (day === 0) {
+
+                        html +=
+                            "<th class='sunday'>" +
+                            days[day] +
+                            "</th>";
+
+                    } else {
+
+                        html +=
+                            "<th>" +
+                            days[day] +
+                            "</th>";
+
+                    }
+
+                }
+
+                html += "</tr>";
+
+
+                // Start date
+                let date = 1;
+
+
+                // Create calendar rows
+                for (let row = 0; row < 6; row++) {
+
+                    html += "<tr>";
+
+
+                    // Create 7 day columns
+                    for (let col = 0; col < 7; col++) {
+
+
+                        // Empty cells before first day
+                        if (row === 0 && col < firstDay) {
+
+                            html += "<td></td>";
+
+                        }
+
+
+                        // Display dates
+                        else if (date <= totalDays) {
+
+                            if (col === 0) {
+
+                                html +=
+                                    "<td class='sunday'>" +
+                                    date +
+                                    "</td>";
+
+                            } else {
+
+                                html +=
+                                    "<td>" +
+                                    date +
+                                    "</td>";
+
+                            }
+
+                            date++;
+
+                        }
+
+
+                        // Empty cells after last date
+                        else {
+
+                            html += "<td></td>";
+
+                        }
+
+                    }
+
+                    html += "</tr>";
+
+
+                    // Stop after last date
+                    if (date > totalDays) {
+                        break;
+                    }
+
+                }
+
+
+                // Close table
+                html += "</table>";
+
+
+                // Add calendar to month div
+                monthDiv.innerHTML = html;
+
+
+                // Add month to main calendar
+                calendar.appendChild(monthDiv);
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>
+```
