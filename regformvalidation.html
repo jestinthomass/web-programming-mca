@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Registration Form</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial}
+body{
+    margin:0;min-height:100vh;display:flex;
+    justify-content:center;align-items:center;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+}
+.box{
+    width:400px;background:#fff;padding:25px;
+    border-radius:15px;box-shadow:0 5px 20px #555;
+}
+h2{text-align:center}
+label{display:block;font-weight:bold;margin-top:10px}
+input{
+    width:100%;padding:10px;margin:5px 0;
+    border:1px solid #ccc;border-radius:5px;
+}
+input:focus{outline:none;border-color:#667eea}
+.error{color:red;font-size:13px}
+.requirements{font-size:13px;margin:5px 0}
+.invalid{color:red}
+.valid{color:green}
+button{
+    width:100%;padding:12px;margin-top:15px;
+    background:#667eea;color:white;border:0;
+    border-radius:5px;font-size:16px;cursor:pointer;
+}
+button:hover{background:#5145cd}
+
+.success-page{
+    width:100%;height:100vh;display:flex;
+    justify-content:center;align-items:center;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+}
+.success-box{
+    background:white;width:400px;padding:40px;
+    text-align:center;border-radius:15px;
+    box-shadow:0 5px 20px #555;
+}
+.success-box h1{color:green;font-size:70px;margin:0}
+.success-box button{width:150px}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Registration Form</h2>
+
+<form id="form">
+
+<label>Full Name</label>
+<input type="text" id="name" placeholder="Enter your name">
+<span class="error" id="nameErr"></span>
+
+<label>Email</label>
+<input type="text" id="email" placeholder="Enter your email">
+<span class="error" id="emailErr"></span>
+
+<label>Mobile Number</label>
+<input type="text" id="mobile" placeholder="Enter 10 digit mobile number">
+<span class="error" id="mobileErr"></span>
+
+<label>Password</label>
+<input type="password" id="password" placeholder="Enter password">
+
+<div class="requirements">
+<div id="length" class="invalid">✗ At least 6 characters</div>
+<div id="upper" class="invalid">✗ One uppercase letter</div>
+<div id="lower" class="invalid">✗ One lowercase letter</div>
+<div id="number" class="invalid">✗ One number</div>
+<div id="special" class="invalid">✗ One special character</div>
+</div>
+<span class="error" id="passErr"></span>
+
+<label>Confirm Password</label>
+<input type="password" id="confirm" placeholder="Confirm password">
+<span class="error" id="confirmErr"></span>
+
+<button type="submit">Submit</button>
+</form>
+</div>
+
+<script>
+
+const $=id=>document.getElementById(id);
+const rules=[
+    ["length",p=>p.length>=6,"At least 6 characters"],
+    ["upper",p=>/[A-Z]/.test(p),"One uppercase letter"],
+    ["lower",p=>/[a-z]/.test(p),"One lowercase letter"],
+    ["number",p=>/[0-9]/.test(p),"One number"],
+    ["special",p=>/[!@#$%^&*]/.test(p),"One special character"]
+];
+
+/* LIVE PASSWORD VALIDATION */
+$("password").oninput=function(){
+    let p=this.value;
+    rules.forEach(r=>{
+        let e=$(r[0]),ok=r[1](p);
+        e.className=ok?"valid":"invalid";
+        e.innerHTML=(ok?"✓ ":"✗ ")+r[2];
+    });
+};
+
+/* FORM VALIDATION */
+$("form").onsubmit=function(e){
+    e.preventDefault();
+
+    let name=$("name").value.trim();
+    let email=$("email").value.trim();
+    let mobile=$("mobile").value.trim();
+    let password=$("password").value;
+    let confirm=$("confirm").value;
+
+    ["nameErr","emailErr","mobileErr","passErr","confirmErr"]
+    .forEach(id=>$(id).innerHTML="");
+
+    let valid=true;
+
+    if(!/^[A-Za-z ]{3,}$/.test(name)){
+        $("nameErr").innerHTML="Enter letters only (minimum 3)";
+        valid=false;
+    }
+
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        $("emailErr").innerHTML="Enter a valid email";
+        valid=false;
+    }
+
+    if(!/^[0-9]{10}$/.test(mobile)){
+        $("mobileErr").innerHTML="Enter exactly 10 digits";
+        valid=false;
+    }
+
+    if(!rules.every(r=>r[1](password))){
+        $("passErr").innerHTML="Complete all password requirements";
+        valid=false;
+    }
+
+    if(!confirm || password!==confirm){
+        $("confirmErr").innerHTML="Passwords do not match";
+        valid=false;
+    }
+
+    /* SUCCESS PAGE */
+    if(valid){
+        document.body.innerHTML=`
+        <div class="success-page">
+            <div class="success-box">
+                <h1>✓</h1>
+                <h2>Submitted Successfully!</h2>
+                <p>Your registration has been completed successfully.</p>
+                <button onclick="location.reload()">Go Back</button>
+            </div>
+        </div>`;
+    }
+};
+
+</script>
+
+</body>
+</html>
