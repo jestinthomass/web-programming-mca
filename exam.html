@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online MCA EXAM PORTAL</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+  body { background: #f1f5f9; color: #0f172a; }
+  header { background: #0f172a; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #2563eb; }
+  .timer { background: #1e293b; padding: 6px 14px; border-radius: 6px; font: bold 1.1rem monospace; color: #38bdf8; }
+  .timer.danger { background: #991b1b; color: #fff; }
+  .wrap { max-width: 1050px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 270px; gap: 20px; }
+  .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+  .q-head { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; margin-bottom: 16px; font-weight: 600; }
+  .opt { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+  .opt:hover, .opt.sel { border-color: #2563eb; background: #eff6ff; }
+  .btns { display: flex; justify-content: space-between; margin-top: 18px; gap: 8px; }
+  button { padding: 9px 16px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; background: #e2e8f0; color: #1e293b; }
+  .btn-next { background: #2563eb; color: #fff; }
+  .btn-sub { background: #16a34a; color: #fff; width: 100%; margin-top: 14px; transition: 0.2s; }
+  .btn-sub:hover { background: #15803d; }
+  .palette { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .p-btn { height: 38px; border: 1px solid #cbd5e1; }
+  .p-btn.ans { background: #16a34a; color: #fff; border-color: #15803d; }
+  .p-btn.act { background: #2563eb; color: #fff; border-color: #1d4ed8; }
+  .res-card { max-width: 520px; margin: 40px auto; text-align: center; border-top: 5px solid #2563eb; background: linear-gradient(180deg, #eff6ff 0%, #fff 38%); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0 20px; }
+  .stat { padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; }
+  .hidden { display: none; }
+  @media (max-width: 720px) { .wrap { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <div><strong>MCA 2026-2028</strong><br><small style="color:#94a3b8">Candidate ID: CBT-2026-401</small></div>
+  <div id="timer" class="timer">00:30</div>
+</header>
+
+<main id="exam" class="wrap">
+  <section class="card">
+    <div class="q-head"><span id="q-num"></span><span style="color:#16a34a">+4 / -1 Marks</span></div>
+    <p id="q-text" style="font-size:1.05rem; font-weight:600; margin-bottom:16px;"></p>
+    <div id="options"></div>
+    <div class="btns">
+      <button onclick="move(-1)">Previous</button>
+      <button class="btn-next" onclick="move(1)">Save & Next</button>
+    </div>
+  </section>
+  <aside class="card">
+    <strong>Question Palette</strong>
+    <div id="palette" class="palette"></div>
+    <button class="btn-sub" onclick="finishExam('Submitted by Candidate')">Submit Exam</button>
+  </aside>
+</main>
+
+<section id="result" class="card hidden" style="max-width:520px; margin:40px auto; text-align:center;">
+  <h2>Exam Scorecard</h2>
+  <p id="reason" style="color:#64748b; margin:6px 0 18px;"></p>
+  <h1 id="score" style="color:#2563eb; font-size:2.2rem; margin-bottom:10px;"></h1>
+  <p id="summary" style="margin-bottom:20px; color:#334155;"></p>
+  <button class="btn-next" onclick="location.reload()">Retake Exam</button>
+</section>
+<section id="result" class="card res-card hidden">
+  <h2 style="color:#0f172a;">Exam Scorecard</h2>
+  <p id="reason" style="color:#475569; margin:4px 0 14px; font-size:0.9rem;"></p>
+  <div style="background:#2563eb; color:#fff; display:inline-block; padding:10px 26px; border-radius:10px;">
+    <small style="display:block; opacity:0.85;">TOTAL SCORE</small>
+    <strong id="score" style="font-size:2rem;"></strong>
+  </div>
+  <div id="summary" class="stats"></div>
+  <button class="btn-next" style="width:100%; padding:11px;" onclick="location.reload()">Retake Exam</button>
+</section>
+
+
+<script>
+  const questions = [
+    { q: "A train 180m long passes a pole in 12s. Time to cross a 420m platform?", opts: ["35 sec", "40 sec", "45 sec", "50 sec"], ans: 1 },
+    { q: "Worst-case insertion time in a Binary Search Tree?", opts: ["O(1)", "O(log n)", "O(n)", "O(n log n)"], ans: 2 },
+    { q: "Which OSI layer handles end-to-end flow control & segmentation?", opts: ["Network", "Data Link", "Transport", "Session"], ans: 2 },
+    { q: "Find the next term in the series: 2, 6, 12, 20, 30, ?", opts: ["40", "42", "44", "48"], ans: 1 },
+    { q: "Which CPU scheduling algorithm causes the 'Convoy Effect'?", opts: ["Round Robin", "SJF", "FCFS", "Priority"], ans: 2 }
+  ];
+  let idx = 0, time = 30, answers = Array(questions.length).fill(null);
+
+  const clock = setInterval(() => {
+    if (--time <= 0) return finishExam("Auto-Submitted (Time Expired)");
+    const t = document.getElementById("timer");
+    t.textContent = `${String(Math.floor(time / 60)).padStart(2, "0")}:${String(time % 60).padStart(2, "0")}`;
+    if (time < 60) t.classList.add("danger");
+  }, 1000);
+
+  function render() {
+    document.getElementById("q-num").textContent = `Question ${idx + 1} of ${questions.length}`;
+    document.getElementById("q-text").textContent = questions[idx].q;
+    document.getElementById("options").innerHTML = questions[idx].opts.map((opt, i) =>
+      `<label class="opt ${answers[idx] === i ? "sel" : ""}" onclick="answers[idx]=${i};render()">
+        <input type="radio" name="opt" ${answers[idx] === i ? "checked" : ""}> ${opt}
+      </label>`).join("");
+    document.getElementById("palette").innerHTML = questions.map((_, i) =>
+      `<button class="p-btn ${answers[i] !== null ? "ans" : ""} ${i === idx ? "act" : ""}" onclick="idx=${i};render()">${i + 1}</button>`).join("");
+  }
+
+  function move(step) { idx = (idx + step + questions.length) % questions.length; render(); }
+
+  function finishExam(msg) {
+    clearInterval(clock);
+    let score = 0, correct = 0, wrong = 0;
+    answers.forEach((a, i) => { if (a === questions[i].ans) { score += 4; correct++; } else if (a !== null) { score -= 1; wrong++; } });
+    const unans = questions.length - correct - wrong;
+    document.getElementById("exam").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+    document.getElementById("reason").textContent = msg;
+    document.getElementById("score").textContent = `${score} / ${questions.length * 4}`;
+    document.getElementById("summary").innerHTML = `
+      <div class="stat" style="background:#dcfce7;color:#166534;">Correct: ${correct}</div>
+      <div class="stat" style="background:#fee2e2;color:#991b1b;">Wrong: ${wrong}</div>
+      <div class="stat" style="background:#f1f5f9;color:#475569;">Unanswered: ${unans}</div>`;
+  }
+  render();
+</script>
+</body>
+</html>
